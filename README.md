@@ -55,3 +55,24 @@ El segundo query es la tabla de los casos de covid con los campos necesarios, li
 En ambos queries me aseguro que no queden duplicados por medio de la función ‘group by‘ de sql.
 
 PruebaJuliana.sql es el archivo donde están los dos queries mencionados anteriormente pero con el esquema de las tablas censurado.
+
+Paso 3: Definir el modelo de datos.
+
+En este esquema de datos se establecen las relaciones entre los departamentos y municipios de Colombia, los casos confirmados de COVID-19 y las IPS (instituciones prestadoras de servicios de salud) públicas y privadas.
+Este modelo permite realizar diferentes consultas y análisis para obtener información relevante, como la cantidad de casos confirmados de COVID-19 por municipio, el estado de los casos, la capacidad de las IPS por municipio y nivel de atención, entre otros.
+
+La arquitectura del proceso es así:
+Jenkins ejecuta el archivo de python principal, esté consulta la API de datos.gov.co y trae los datos solicitados, los carga como archivo csv a AWS S3, luego se crean 3 tablas en Amazon Redshift, finalmente con las tablas en Amazon Redshift se construyen 1 vez dos queries que serán las fuentes de datos de un Tableau, con el tablero actualizado se puede hacer seguimiento de los datos y tomar decisiones correspondientes por los análisis a la información.
+
+Imagen_9: 
+	Se evidencian las fuentes de datos (que son los queries creados anteriormente) relacionadas por medio de dos campos ya limpios, con las que he creado una posible opción de tablero de visualización para hacer análisis de datos.
+
+Imagen_10:
+	Propuesta de un tablero para analizar los datos de los 3 conjuntos de datos, agregué filtros de fecha en caso de querer ver algún momento específico de la Pandemia y 3 tablas con información útil para los analistas.
+
+Debido a mi experiencia Jenkins es una herramienta muy útil para la automatización de procesos y para auditar los proyectos.
+Para hacer limpieza de tablas tan grandes como la de casos de covid (6,3 millones de registros) es muy útil Amazon Redshift, inicialmente intenté hacerlo directamente en python pero el proceso era muy lento por que opté por cargar los datos a S3 y así migrarlos a Redshift para manipularlos óptimamente. 
+Escogí Tableau porque es muy útil como herramienta para crear los tableros de visualización.
+
+El proyecto se puede poner a ejecutar diario para tener el tablero actualizado, Jenkins permite poner de forma automática la ejecución cada que uno requiera, se configuraría el proyecto para que ejecute diario en la mañana y así las tablas en Redshift queden actualizadas. Después, se configura el Tableau para que ejecute posiblemente 1 hora después de que el Jenkins ejecute para que así muestre el tablero con los datos actualizados debido a que ya las fuentes de datos estarían actualizadas.
+A mi correo llegarán alertas en caso de que el tablero deje de actualizarse por algún problema, igualmente que el Jenkins, en ese caso entraría como ingeniera de datos a corregir el problema.
